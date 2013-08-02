@@ -4,7 +4,10 @@ import (
 	"flag"
 	"fmt"
 	"html/template"
+	"image"
+	_ "image/gif"
 	"image/jpeg"
+	_ "image/png"
 	"io"
 	"log"
 	"net/http"
@@ -60,21 +63,23 @@ func displayThumbnails(w http.ResponseWriter, req *http.Request) {
 	// img, imgErr := jpeg.Decode(req.Body)
 	rawFile, header, fileErr := req.FormFile("image")
 	if fileErr != nil {
-		io.WriteString(w, fmt.Sprintf("Error while parsing: %s", fileErr))
+		io.WriteString(w, fmt.Sprintf("Error while reading: %s", fileErr))
 		return
 	}
 
-	// TODO Handle arbitrary image types
-	img, imgErr := jpeg.Decode(rawFile)
+	// Handle jpg, gif, and png
+	img, typeString, imgErr := image.Decode(rawFile)
+	log.Println("Decoded image type:", typeString)
 	if imgErr != nil {
 		io.WriteString(w, fmt.Sprintf("Error while decoding: %s", imgErr))
 		return
 	}
 
+	// TODO How to get file size without re-encoding?
 	// TODO Shrink the original image down to thumbnail size (at most 200px)
 
 	// Create thumbnails for a range of qualities
-	// TODO Use option
+	// TODO User option
 	qualities := []int{100, 90, 75, 65, 50, 35, 25, 10}
 	files := make([]*Thumbnail, len(qualities))
 
@@ -95,7 +100,6 @@ func displayThumbnails(w http.ResponseWriter, req *http.Request) {
 		info, infoErr := output.Stat()
 		if infoErr == nil {
 			files[index].Size = strconv.FormatFloat(float64(info.Size())/1000.0, 'f', 1, 64) + " kb"
-			log.Println("File size:", files[index].Size)
 		}
 	}
 
