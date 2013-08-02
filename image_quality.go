@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"html/template"
 	"image/jpeg"
@@ -12,9 +13,11 @@ import (
 	"strconv"
 )
 
+// Templates
 var uploadTemplate = template.Must(template.ParseFiles("upload.html"))
 var thumbnailTemplate = template.Must(template.ParseFiles("thumbnails.html"))
 
+// Directories
 var staticURL = "/static/"
 var staticDir = "static/"
 var mediaURL = "/media/"
@@ -22,6 +25,9 @@ var mediaDir = "media/"
 
 // TODO errors are currently ignored
 var curDir, _ = os.Getwd()
+
+// Server Address
+var address string
 
 // Common attrs
 var attrs = map[string]interface{}{
@@ -105,14 +111,15 @@ func displayThumbnails(w http.ResponseWriter, req *http.Request) {
 }
 
 func main() {
+	// Parse the given server address
+	flag.StringVar(&address, "address", ":8080", "address for the server")
+	flag.Parse()
+
 	// Static files: images, css, javascript
 	http.Handle(staticURL, http.StripPrefix(staticURL, http.FileServer(http.Dir(filepath.Join(curDir, staticDir)))))
 
 	// Uploaded files
 	http.Handle(mediaURL, http.StripPrefix(mediaURL, http.FileServer(http.Dir(filepath.Join(curDir, mediaDir)))))
-
-	// TODO determine address from a flag
-	address := ":8080"
 
 	http.HandleFunc("/", uploadHandler)
 	http.HandleFunc("/favicon.ico", faviconHandler)
