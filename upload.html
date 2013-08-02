@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Upload | Image Quality</title>
+    <link rel="shortcut icon" href="favicon.ico">
+    <link rel="stylesheet" href="{{ .static_url }}bootstrap.min.css">
+    <link rel="stylesheet" href="{{ .static_url }}styles.css">
+  </head>
+  <body>
+    <div class="row">
+      <div class="col-4 col-offset-4">
+        <form action="/" enctype="multipart/form-data" method="POST">
+          <fieldset>
+            <legend>Image Quality</legend>
+            <div class="form-group">
+              <label for="imageInput">Select an Image</label>
+              <input id="imageInput" type="file" accept="image/*" name="image" required>
+            </div>
+            <button type="submit" class="btn btn-default btn-block">Submit</button>
+          </fieldset>
+        </form>
+      </div>
+    </div>
+  </body>
+</html>

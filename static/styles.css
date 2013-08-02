@@ -1,0 +1,7 @@
+#thumbnails {
+    list-style: none;
+}
+
+#thumbnails li {
+    display: inline-block;
+}
